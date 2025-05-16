@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete user</title>
+</head>
+<body>
+    <h3>Delete a user by id:</h3>
+    <br/>
+    <form th:method="POST" th:action="@{/admin/deleteuser}">
+        <label for="id">Enter user id: </label>
+        <input name="id" type="text" id="id"/>
+        <br/>
+        <input type="submit" value="Delete user"/>
+    </form>
+    <br/>
+    <a th:href="@{/admin}">Список пользователей</a>
+</body>
+</html>

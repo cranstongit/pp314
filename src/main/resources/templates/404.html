@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Error Page</title>
+</head>
+<body>
+    <div>
+        <h2>Error page</h2>
+        <br/>
+        <div>
+            <p th:text="'Error message: ' + ${errorMessage}">Error message</p>
+        </div>
+        <br/>
+        <br/>
+        <a th:href="@{/}">Главная страница</a>
+        <br/>
+        <a th:href="@{/login}">Войти в аккаунт</a>
+        <br/>
+        <a th:href="@{/logout}">Выйти из аккаунта</a>
+    </div>
+</body>
+</html>

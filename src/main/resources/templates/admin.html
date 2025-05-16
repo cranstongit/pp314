@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin's page</title>
+</head>
+<body>
+    <h2>Admin's information:</h2>
+    <br/>
+    <div th:if="${admin}">
+        <p th:text="'User ID: ' + ${admin.getId()} + ', First name: ' + ${admin.getFirstName()} + ', Last name: '
+            + ${admin.getLastName()} + ', E-mail: ' + ${admin.getEmail()}">Id, First name, Last name, E-mail</p>
+        <p th:text="'Username: ' + ${admin.getUsername()} + ', Role: ' + ${admin.getRoles()}">Username, Role</p>
+    </div>
+    <div th:unless="${admin}">
+        <br/>
+        <p>БД не содержит данных администратора.</p>
+    </div>
+    <br/>
+    <h2>Users information:</h2>
+    <div th:if="${getUsers}">
+        <h3>Список пользователей:</h3>
+        <div th:each="user : ${getUsers}">
+            <p th:text="'User ID: ' + ${user.getId()} + ', First name: ' + ${user.getFirstName()} + ', Last name: '
+                + ${user.getLastName()} + ', E-mail: ' + ${user.getEmail()}">Id, First name, Last name, E-mail</p>
+            <p th:text="'Username: ' + ${user.getUsername()} + ', Role: ' + ${user.getRoles()}">Username, Role</p>
+            <a th:href="@{/admin/edituser/{id}(id=${user.getId()})}">Редактировать</a>
+            <br/>
+        </div>
+    </div>
+    <div th:unless="${getUsers}">
+        <br/>
+        <p>БД не содержит пользователей.</p>
+    </div>
+    <div>
+        <br/>
+        <br/>
+        <a th:href="@{/admin/newuser}">Создать пользователя</a>
+        <br/>
+        <a th:href="@{/admin/deleteuser}">Удалить пользователя</a>
+        <br/>
+        <br/>
+        <a th:href="@{/}">Главная страница</a>
+        <br/>
+        <a th:href="@{/login}">Войти в аккаунт</a>
+        <br/>
+        <a th:href="@{/logout}">Выйти из аккаунта</a>
+        <br/>
+        <br/>
+    </div>
+</body>
+</html>

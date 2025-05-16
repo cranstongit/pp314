@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>User's page</title>
+</head>
+<body>
+    <h2>User information:</h2>
+    <br/>
+    <div th:if="${updateUser}">
+        <form th:action="@{/admin/edituser/{id}(id=${updateUser.id})}" th:object="${updateUser}" method="post">
+
+            <p>User ID: <span th:text="${updateUser.id}">ID</span></p>
+
+            <sec:authorize access="hasRole('ROLE_ADMIN')">
+                <p>First name: <input type="text" th:field="*{firstName}" /></p>
+                <p>Last name: <input type="text" th:field="*{lastName}" /></p>
+                <p>Email: <input type="email" th:field="*{email}" /></p>
+                <p>Username: <input type="text" th:field="*{username}" /></p>
+                <p>Password: <input type="password" th:field="*{password}" placeholder="Enter new password" /></p>
+
+                <div th:each="role : ${allRoles}">
+                    <input type="checkbox" th:value="${role.id}" th:field="*{roleIds}" th:id="${'role_' + role.id}" />
+                    <label th:for="${'role_' + role.id}" th:text="${role.roleName}">ROLE</label><br/>
+                </div>
+                <br/>
+                <button type="submit">Обновить пользователя</button>
+                <br/>
+                <br/>
+                <a th:href="@{/admin}">Список пользователей</a>
+            </sec:authorize>
+        </form>
+    </div>
+    <div th:if="${user}">
+        <sec:authorize access="hasRole('ROLE_USER')">
+            <p th:text="'User ID: ' + ${user.getId()}">Id</p>
+            <p th:text="'First name: ' + ${user.getFirstName()}">First name</p>
+            <p th:text="'Last name: ' + ${user.getLastName()}">Last name</p>
+            <p th:text="'E-mail: ' + ${user.getEmail()}">E-mail</p>
+            <p th:text="'Username: ' + ${user.getUsername()}">Username</p>
+            <p>
+                Role:
+                <span th:each="role : ${user.roles}" th:text="${role.roleName} + ' '" />
+            </p>
+        </sec:authorize>
+    </div>
+    <div>
+        <br/>
+        <br/>
+        <a th:href="@{/}">Главная страница</a>
+        <br/>
+        <a th:href="@{/login}">Войти в аккаунт</a>
+        <br/>
+        <a th:href="@{/logout}">Выйти из аккаунта</a>
+        <br/>
+        <br/>
+    </div>
+</body>
+</html>
