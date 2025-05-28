@@ -1,52 +1,224 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:background-color="http://www.w3.org/1999/xhtml"
+      xmlns:padding="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Admin's page</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
 </head>
 <body>
-    <h2>Admin's information:</h2>
-    <br/>
-    <div th:if="${admin}">
-        <p th:text="'User ID: ' + ${admin.getId()} + ', First name: ' + ${admin.getFirstName()} + ', Last name: '
-            + ${admin.getLastName()} + ', E-mail: ' + ${admin.getEmail()}">Id, First name, Last name, E-mail</p>
-        <p th:text="'Username: ' + ${admin.getUsername()} + ', Role: ' + ${admin.getRoles()}">Username, Role</p>
-    </div>
-    <div th:unless="${admin}">
-        <br/>
-        <p>БД не содержит данных администратора.</p>
-    </div>
-    <br/>
-    <h2>Users information:</h2>
-    <div th:if="${getUsers}">
-        <h3>Список пользователей:</h3>
-        <div th:each="user : ${getUsers}">
-            <p th:text="'User ID: ' + ${user.getId()} + ', First name: ' + ${user.getFirstName()} + ', Last name: '
-                + ${user.getLastName()} + ', E-mail: ' + ${user.getEmail()}">Id, First name, Last name, E-mail</p>
-            <p th:text="'Username: ' + ${user.getUsername()} + ', Role: ' + ${user.getRoles()}">Username, Role</p>
-            <a th:href="@{/admin/edituser/{id}(id=${user.getId()})}">Редактировать</a>
-            <br/>
+    <div class="container-fluid"> <!-- контейнер-->
+        <div th:if="${admin}"> <!-- начало блока данных администратора-->
+
+            <nav class="navbar  navbar-dark bg-dark" > <!-- полоска сверху с данными администратора -->
+                <a class="navbar-brand" href="#">
+                    <b th:text="${admin.username}"></b>
+                    <span th:text="' with roles: '"></span>
+                    <span th:each="role, iterStat : ${admin.roles}">
+                        <span th:text="${role.roleName}"></span><span th:text="${iterStat.last ? '' : ', '}"></span>
+                    </span>
+                </a>
+                <form th:action="@{/logout}" method="post" class="form-inline"> <!-- ссылка Logout с пост запросом -->
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="btn btn-link nav-link" style="color: gray; padding: 0;">Logout</button>
+                </form>
+            </nav> <!-- конец полоски админа -->
+
+            <div class="row"> <!-- сетка -->
+
+                <div class="col-2" style="padding-right:0;"> <!-- 2 ячейки из 12 под две вкладки слева -->
+                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical" style="margin-top:15px;">
+                        <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Admin</a> <!-- pill админа слева -->
+                        <a class="nav-link" id="vertical-tab-admin-info" data-toggle="pill" href="#content-admin-info" role="tab" aria-controls="content-admin-info" aria-selected="false">User</a> <!-- pill юзера слева -->
+                    </div>
+                </div>
+
+                <!-- начало вкладок контента -->
+                <div class="col-10" style="background-color: #f2f2f2; padding: 30px;"> <!-- сетка контента справа, серый цвет -->
+
+                    <div class="tab-content" id="v-pills-tabContent"> <!-- начало ??????????????????????? -->
+
+                        <!-- начало области контента для боковой кнопки Admin слева. Две горизонтальных вкладки: список пользователей и создание нового пользователя -->
+                        <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab"> <!-- горизонтальная панель 2х вкладок админа-->
+                            <h2>Admin panel</h2>
+
+                            <ul class="nav nav-tabs" id="myTab" role="tablist"> <!-- сами вкладки списка пользователйе и создания нового  -->
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Users table</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="horiz-newUserTab" data-toggle="tab" href="#content-newUserTab" role="tab" aria-controls="content-newUserTab" aria-selected="false">New User</a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content" id="myTabContent" style="background-color: white;"> <!-- контент горизонтальных вкладок -->
+
+
+                                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab" style="background-color: white;">  <!-- таблица списка пользователей -->
+
+                                    <nav class="navbar navbar-light bg-light" style="background-color: #f2f2f2;">  <!-- серая nav панель All users-->
+                                        <a class="navbar-brand" ><strong>All users</strong></a>
+                                    </nav>
+
+                                    <div style="padding: 20px;">
+                                        <table class="table table-striped">  <!-- таблица списка пользователей -->
+                                            <thead>  <!-- оглавление таблицы -->
+                                                <tr>
+                                                    <th scope="col">ID</th>
+                                                    <th scope="col">First Name</th>
+                                                    <th scope="col">Last Name</th>
+                                                    <th scope="col">Email</th>
+                                                    <th scope="col">Role</th>
+                                                    <th scope="col">Edit</th>
+                                                    <th scope="col">Delete</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>  <!-- тело таблицы -->
+                                                <tr th:each="user : ${getUsers}">
+                                                        <th scope="row" th:text="${user.getId()}">Id</th>
+                                                        <td th:text="${user.getFirstName()}">First Name</td>
+                                                        <td th:text="${user.getLastName()}">Last Name</td>
+                                                        <td th:text="${user.getEmail()}">Email</td>
+                                                        <td>
+                                                            <span th:each="role, iterStat : ${user.getRoles()}">
+                                                                <span th:text="${role.roleName}"></span><span th:text="${iterStat.last ? '' : ', '}"></span>
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <a th:href="@{/admin/edituser/{id}(id=${user.getId()})}">
+                                                                <button type="button" class="btn btn-info">Edit</button>
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            <a th:href="@{/admin/deleteuser}">
+                                                                <button type="button" class="btn btn-danger">Delete</button>
+                                                            </a>
+                                                        </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div> <!-- конец таблицы списка пользователей -->
+
+                                <div class="tab-pane fade" id="content-newUserTab" role="tabpanel" aria-labelledby="horiz-newUserTab"> <!-- контент нового пользователя -->
+
+                                    <nav class="navbar navbar-light bg-light" style="background-color: #f2f2f2;">  <!-- серая nav панель All users-->
+                                        <a class="navbar-brand font-weight-bold">Add new user</a>
+                                    </nav>
+
+                                    <div style="padding: 20px; display: flex; justify-content: center;">
+                                        <form th:method="POST" th:action="@{/admin/newuser}" th:object="${newUser}" style="width: 300px; text-align: center;">
+                                            <div class="form-group">
+                                                <label for="firstName" class="font-weight-bold">First name</label>
+                                                <input type="text" th:field="*{firstName}" id="firstName" class="form-control" aria-describedby="firstNameField">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="lastName" class="font-weight-bold">Last name</label>
+                                                <input type="text" th:field="*{lastName}" id="lastName" class="form-control" aria-describedby="lastNameField">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="email" class="font-weight-bold">Email</label>
+                                                <input type="text" th:field="*{email}" id="email" class="form-control" aria-describedby="emailField">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="username" class="font-weight-bold">Username</label>
+                                                <input type="text" th:field="*{username}" id="username" class="form-control" aria-describedby="usernameField" required>
+                                                <small id="usernameField" class="form-text text-muted">
+                                                    required field
+                                                </small>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="password" class="font-weight-bold">Password</label>
+                                                <input type="password" th:field="*{password}" id="password" class="form-control" aria-describedby="passwordField" required>
+                                                <small id="passwordField" class="form-text text-muted">
+                                                    required field
+                                                </small>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="roleIds" class="font-weight-bold">Roles</label>
+                                                <select multiple class="custom-select" th:field="*{roleIds}" id="roleIds" aria-describedby="roleField" required>
+                                                    <option th:each="role : ${allRoles}"
+                                                            th:value="${role.id}"
+                                                            th:text="${role.roleName}">
+                                                    </option>
+                                                </select>
+                                                <small id="roleField" class="form-text text-muted">
+                                                    required field
+                                                </small>
+                                            </div>
+
+<!--                                            <div th:each="role : ${allRoles}">-->
+<!--                                                <select class="custom-select" multiple required>-->
+<!--                                                    <option th:value="${role.id}" th:field="*{roleIds}" th:id="${'role_' + role.id}">Four</option>-->
+<!--                                                    <label th:for="${'role_' + role.id}" th:text="${role.roleName}">ROLE</label>-->
+<!--                                                </select>-->
+<!--                                            </div>-->
+
+<!--                                            <input type="submit" value="Add new User">-->
+                                        </form>
+                                    </div>
+                                </div>
+                            </div> <!-- конец контента горизонтальных вкладок -->
+
+                        </div> <!-- конец области контента для боковой кнопки Admin слева. Две горизонтальных вкладки: список пользователей и создание нового пользователя -->
+
+                        <!-- начало области контента для боковой кнопки User слева -->
+                        <div class="tab-pane fade" id="content-admin-info" role="tabpanel" aria-labelledby="vertical-tab-admin-info"> <!-- начало области контента для боковой кнопки User слева -->
+
+                            <h2>User information-page</h2>
+
+                            <nav class="navbar navbar-light bg-light" style="background-color: #f2f2f2;">  <!-- серая nav панель All users-->
+                                <a class="navbar-brand"><strong>About user</strong></a>
+                            </nav>
+
+                            <div class="table-responsive" style="background-color: white; padding: 20px;">  <!-- блок информации об администраторе -->
+                                <table class="table table-striped">  <!-- таблица информации об администраторе -->
+                                    <thead>  <!-- оглавление таблицы -->
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">First Name</th>
+                                            <th scope="col">Last Name</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Role</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>  <!-- тело таблицы -->
+                                        <tr>
+                                            <th scope="row" th:text="${admin.id}">Id</th>
+                                            <td th:text="${admin.firstName}">First Name</td>
+                                            <td th:text="${admin.lastName}">Last Name</td>
+                                            <td th:text="${admin.email}">Email</td>
+                                            <td>
+                                                    <span th:each="role, iterStat : ${admin.roles}">
+                                                        <span th:text="${role.roleName}"></span><span th:text="${iterStat.last ? '' : ', '}"></span>
+                                                    </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>  <!-- окончание таблицы информации об администраторе -->
+                            </div> <!-- конец блока информации об администраторе -->
+                        </div> <!-- окончание области контента для боковой кнопки User слева -->
+
+                    </div> <!-- окончание ??????????????????????? -->
+
+                </div> <!--   окончание блока контента -->
+            </div> <!--   окончание сетки-->
+        </div> <!-- конец блока данных администратора-->
+
+        <div th:unless="${admin}"> <!-- если данные админа отсутствуют в базе -->
+            <nav class="navbar navbar-dark bg-dark"> <!-- полоска сверху без данных администратора -->
+                <a class="navbar-brand" href="#">
+                    БД не содержит данных администратора
+                </a>
+                <form th:action="@{/logout}" method="post" class="form-inline"> <!-- ссылка Logout с пост запросом -->
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="btn btn-link nav-link" style="color: gray; padding: 0;">Logout</button>
+                </form>
+            </nav>
         </div>
     </div>
-    <div th:unless="${getUsers}">
-        <br/>
-        <p>БД не содержит пользователей.</p>
-    </div>
-    <div>
-        <br/>
-        <br/>
-        <a th:href="@{/admin/newuser}">Создать пользователя</a>
-        <br/>
-        <a th:href="@{/admin/deleteuser}">Удалить пользователя</a>
-        <br/>
-        <br/>
-        <a th:href="@{/}">Главная страница</a>
-        <br/>
-        <a th:href="@{/login}">Войти в аккаунт</a>
-        <br/>
-        <a th:href="@{/logout}">Выйти из аккаунта</a>
-        <br/>
-        <br/>
-    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script th:src="@{/js/bootstrap.bundle.js}"></script>
 </body>
 </html>

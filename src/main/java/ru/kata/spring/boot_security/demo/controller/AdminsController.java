@@ -29,12 +29,26 @@ public class AdminsController {
     }
 
 
+//    @GetMapping({"/", ""})
+//    @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
+//    public String visitAdminPage(Principal principal, ModelMap model) {
+//
+//        model.addAttribute("getUsers", userService.findAll()); //получаем всех пользователей
+//        model.addAttribute("admin", userService.findByUsername(principal.getName()));
+//
+//        return "admin";
+//    }
+
+
     @GetMapping({"/", ""})
     @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
     public String visitAdminPage(Principal principal, ModelMap model) {
 
         model.addAttribute("getUsers", userService.findAll()); //получаем всех пользователей
         model.addAttribute("admin", userService.findByUsername(principal.getName()));
+
+        model.addAttribute("newUser", new User());
+        model.addAttribute("allRoles", roleService.findAll()); // Добавим роли
 
         return "admin";
     }
@@ -56,7 +70,7 @@ public class AdminsController {
         model.addAttribute("newUser", new User());
         model.addAttribute("allRoles", roleService.findAll()); // Добавим роли
 
-        return "new";
+        return "admin";
     }
 
     @PostMapping("/newuser")
