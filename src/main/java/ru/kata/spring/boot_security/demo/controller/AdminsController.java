@@ -29,17 +29,6 @@ public class AdminsController {
     }
 
 
-//    @GetMapping({"/", ""})
-//    @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
-//    public String visitAdminPage(Principal principal, ModelMap model) {
-//
-//        model.addAttribute("getUsers", userService.findAll()); //получаем всех пользователей
-//        model.addAttribute("admin", userService.findByUsername(principal.getName()));
-//
-//        return "admin";
-//    }
-
-
     @GetMapping({"/", ""})
     @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
     public String visitAdminPage(Principal principal, ModelMap model) {
@@ -62,16 +51,6 @@ public class AdminsController {
         return "404";
     }
 
-
-    @GetMapping("/newuser")
-    @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
-    public String createUser(ModelMap model) {
-
-        model.addAttribute("newUser", new User());
-        model.addAttribute("allRoles", roleService.findAll()); // Добавим роли
-
-        return "admin";
-    }
 
     @PostMapping("/newuser")
     @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
