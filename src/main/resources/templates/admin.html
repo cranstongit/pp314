@@ -25,7 +25,6 @@
                             <button type="submit" class="btn btn-link nav-link" style="color: gray; padding: 0;">Logout</button>
                         </form>
                     </nav> <!-- конец полоски админа -->
-
                 </div>
 
                 <div th:unless="${admin}"> <!-- если данные админа отсутствуют в базе -->
@@ -39,7 +38,6 @@
                             <button type="submit" class="btn btn-link nav-link" style="color: gray; padding: 0;">Logout</button>
                         </form>
                     </nav>
-
                 </div>
 
                 <div class="row"> <!-- сетка -->
@@ -155,8 +153,8 @@
                                                     <label for="roleIds" class="font-weight-bold">Roles</label>
                                                     <select multiple class="custom-select" th:field="*{roleIds}" id="roleIds" aria-describedby="roleField" size="2" required>
                                                         <option th:each="role : ${allRoles}"
-                                                                th:value="${role.id}"
-                                                                th:text="${role.roleName}">
+                                                            th:value="${role.id}"
+                                                            th:text="${role.roleName}">
                                                         </option>
                                                     </select>
                                                     <small id="roleField" class="form-text text-muted">
@@ -196,9 +194,9 @@
                                                 <td th:text="${admin.lastName}">Last Name</td>
                                                 <td th:text="${admin.email}">Email</td>
                                                 <td>
-                                                        <span th:each="role, iterStat : ${admin.roles}">
-                                                            <span th:text="${role.roleName}"></span><span th:text="${iterStat.last ? '' : ', '}"></span>
-                                                        </span>
+                                                    <span th:each="role, iterStat : ${admin.roles}">
+                                                        <span th:text="${role.roleName}"></span><span th:text="${iterStat.last ? '' : ', '}"></span>
+                                                    </span>
                                                 </td>
                                             </tr>
                                         </tbody>

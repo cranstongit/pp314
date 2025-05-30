@@ -25,7 +25,6 @@
                             <button type="submit" class="btn btn-link nav-link" style="color: gray; padding: 0;">Logout</button>
                         </form>
                     </nav> <!-- конец полоски user -->
-
                 </div>
 
                 <div th:unless="${user}"> <!-- если данные админа отсутствуют в базе -->
@@ -39,7 +38,6 @@
                             <button type="submit" class="btn btn-link nav-link" style="color: gray; padding: 0;">Logout</button>
                         </form>
                     </nav>
-
                 </div>
 
                 <div class="row"> <!-- сетка -->
@@ -54,7 +52,6 @@
                     <div class="col-10" style="background-color: #f2f2f2; padding: 30px;"> <!-- сетка контента справа, серый цвет -->
 
                         <div class="tab-content" id="v-pills-tabContent"> <!-- начало контента области User -->
-
                             <h2>User information-page</h2>
 
                             <nav class="navbar navbar-light bg-light" style="background-color: #f2f2f2;">  <!-- серая nav панель All users-->
@@ -62,44 +59,30 @@
                             </nav>
 
                             <div class="table-responsive" style="background-color: white; padding: 20px;">  <!-- блок информации о user -->
-
-                                    <p th:text="'User ID: ' + ${user.getId()}">Id</p>
-                                    <p th:text="'First name: ' + ${user.getFirstName()}">First name</p>
-                                    <p th:text="'Last name: ' + ${user.getLastName()}">Last name</p>
-                                    <p th:text="'E-mail: ' + ${user.getEmail()}">E-mail</p>
-                                    <p th:text="'Username: ' + ${user.getUsername()}">Username</p>
-                                    <p>
-                                        Role:
-                                        <span th:each="role : ${user.roles}" th:text="${role.roleName} + ' '" />
-                                    </p>
-
-
-                                    <table class="table table-striped">  <!-- таблица информации об администраторе -->
-                                        <thead>  <!-- оглавление таблицы -->
-                                            <tr>
-                                                <th scope="col">ID</th>
-                                                <th scope="col">First Name</th>
-                                                <th scope="col">Last Name</th>
-                                                <th scope="col">Email</th>
-                                                <th scope="col">Role</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>  <!-- тело таблицы -->
-<!--                                            <tr>-->
-<!--                                                <th scope="row" th:text="${user.id}">Id</th>-->
-<!--                                                <td th:text="${user.firstName}">First Name</td>-->
-<!--                                                <td th:text="${user.lastName}">Last Name</td>-->
-<!--                                                <td th:text="${user.email}">Email</td>-->
-<!--                                                <td>-->
-<!--                                                    <span th:each="role, iterStat : ${user.roles}">-->
-<!--                                                        <span th:text="${user.roleName}"></span><span th:text="${iterStat.last ? '' : ', '}"></span>-->
-<!--                                                    </span>-->
-<!--                                                </td>-->
-<!--                                            </tr>-->
-                                        </tbody>
-                                    </table>  <!-- окончание таблицы информации об администраторе -->
-
-
+                                <table class="table table-striped">  <!-- таблица информации об администраторе -->
+                                    <thead>  <!-- оглавление таблицы -->
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">First Name</th>
+                                            <th scope="col">Last Name</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Role</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>  <!-- тело таблицы -->
+                                        <tr>
+                                            <th scope="row" th:text="${user.getId()}">Id</th>
+                                            <td th:text="${user.getFirstName()}">First Name</td>
+                                            <td th:text="${user.getLastName()}">Last Name</td>
+                                            <td th:text="${user.getEmail()}">Email</td>
+                                            <td>
+                                                <span th:each="role, iterStat : ${user.roles}">
+                                                    <span th:text="${role.roleName}"></span><span th:text="${iterStat.last ? '' : ', '}"></span>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>  <!-- окончание таблицы информации об администраторе -->
                             </div> <!-- конец блока информации о user -->
                         </div> <!-- конец контента области User -->
                     </div> <!--   окончание блока сетки контента справа -->

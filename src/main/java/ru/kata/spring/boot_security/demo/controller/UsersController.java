@@ -22,12 +22,16 @@ public class UsersController {
     @GetMapping({"/", ""})
     public String visitUserPage(Principal principal, ModelMap model) {
 
-//        if (user == null || username == null) {
-//            model.addAttribute("errorMessage", "Данные пользователя отсутствуют в БД.");
-//            return "404";
-//        }
+        String username = principal.getName();
 
-        model.addAttribute("user", userService.findByUsername(principal.getName()));
+        User user = userService.findByUsername(username);
+
+        if (user == null || username == null) {
+            model.addAttribute("errorMessage", "Данные пользователя отсутствуют в БД.");
+            return "404";
+        }
+
+        model.addAttribute("user", user);
 
         return "user";
     }
