@@ -91,25 +91,25 @@ public class AdminsController {
     }
 
 
-    @GetMapping("/edituser/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")  //второй слой защиты
-    public String editUserForm(@PathVariable("id") long id, ModelMap model) {
-
-        try {
-            model.addAttribute("updateUser", userService.findOrThrow(id));
-            model.addAttribute("allRoles", roleService.findAllOrThrow());
-        } catch (EntityNotFoundException e) {
-            model.addAttribute("errorMessage", "Пользователь или роли не найдены: " + e.getMessage());
-            return "404";
-        }
-
-        return "user";
-    }
+//    @GetMapping("/edituser/{id}")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")  //второй слой защиты
+//    public String editUserForm(@PathVariable("id") long id, ModelMap model) {
+//
+//        try {
+//            model.addAttribute("updateUser", userService.findOrThrow(id));
+//            model.addAttribute("allRoles", roleService.findAllOrThrow());
+//        } catch (EntityNotFoundException e) {
+//            model.addAttribute("errorMessage", "Пользователь или роли не найдены: " + e.getMessage());
+//            return "404";
+//        }
+//
+//        return "admin";
+//    }
 
     @PostMapping("/edituser/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
     public String updateUser(@PathVariable("id") long id,
-                             @ModelAttribute("updateUser") User user, ModelMap model) {
+                             @ModelAttribute("user") User user, ModelMap model) {
 
         try {
             userService.update(id, user);
