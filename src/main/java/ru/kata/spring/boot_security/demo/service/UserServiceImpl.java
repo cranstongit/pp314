@@ -87,7 +87,11 @@ public class UserServiceImpl implements UserService {
       user.setRoles(roles);
       user.setId(id);
 
-      userDao.merge(user);
+      try {
+         userDao.merge(user);
+      } catch (RuntimeException e) {
+         throw new RuntimeException("Merging error: " + e.getMessage());
+      }
    }
 
    @Transactional

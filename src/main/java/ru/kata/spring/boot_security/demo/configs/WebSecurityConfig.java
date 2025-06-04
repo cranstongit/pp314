@@ -28,10 +28,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                    .antMatchers("/", "/index", "/css/**", "/js/**").permitAll() //эти пути открыты для всех, белый список
+                    .antMatchers("/css/**", "/js/**").permitAll() //эти пути открыты для всех, белый список
                     .antMatchers("/admin/**").hasRole("ADMIN") //.hasRole("ADMIN") автоматически ищет "ROLE_ADMIN"
                     .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                .anyRequest().authenticated() //любые реквесты должны быть аутентифицированы
+                    .anyRequest().authenticated() //любые реквесты должны быть аутентифицированы
                 .and()
                 .formLogin().successHandler(successUserHandler).permitAll() //форма Spring, разрешена для всех. После атентификации переходит в соответствии с succesUserHandler
                 .and()

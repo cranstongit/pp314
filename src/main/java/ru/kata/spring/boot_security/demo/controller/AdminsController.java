@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
@@ -45,9 +44,7 @@ public class AdminsController {
 
     @GetMapping("/404")
     public String showError(ModelMap model) {
-
         model.addAttribute("errorMessage", "Something went wrong");
-
         return "404";
     }
 
@@ -70,15 +67,9 @@ public class AdminsController {
     }
 
 
-    @GetMapping("/deleteuser")
+    @PostMapping("/deleteuser/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
-    public String deleteUser(ModelMap model) {
-        return "delete";
-    }
-
-    @PostMapping("/deleteuser")
-    @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
-    public String removeUser(@RequestParam("id") long id, ModelMap model) {
+    public String removeUser(@PathVariable("id") long id, ModelMap model) {
 
         try {
             userService.delete(id);
@@ -91,21 +82,6 @@ public class AdminsController {
     }
 
 
-//    @GetMapping("/edituser/{id}")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")  //второй слой защиты
-//    public String editUserForm(@PathVariable("id") long id, ModelMap model) {
-//
-//        try {
-//            model.addAttribute("updateUser", userService.findOrThrow(id));
-//            model.addAttribute("allRoles", roleService.findAllOrThrow());
-//        } catch (EntityNotFoundException e) {
-//            model.addAttribute("errorMessage", "Пользователь или роли не найдены: " + e.getMessage());
-//            return "404";
-//        }
-//
-//        return "admin";
-//    }
-
     @PostMapping("/edituser/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
     public String updateUser(@PathVariable("id") long id,
@@ -114,6 +90,9 @@ public class AdminsController {
         try {
             userService.update(id, user);
         } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", "Ошибка при изменении: " + e.getMessage());
+            return "404";
+        } catch (RuntimeException e) {
             model.addAttribute("errorMessage", "Ошибка при изменении: " + e.getMessage());
             return "404";
         }
