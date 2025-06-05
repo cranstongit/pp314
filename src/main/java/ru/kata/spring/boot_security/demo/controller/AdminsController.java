@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
@@ -30,55 +32,84 @@ public class AdminsController {
 
     @GetMapping({"/", ""})
     @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
-    public String visitAdminPage(Principal principal, ModelMap model) {
+    public ModelAndView adminPage(Principal principal) {
 
-        model.addAttribute("getUsers", userService.findAll()); //получаем всех пользователей
-        model.addAttribute("admin", userService.findByUsername(principal.getName()));
+        ModelAndView mavAdmin = new ModelAndView("admin");
 
-        model.addAttribute("newUser", new User());
-        model.addAttribute("allRoles", roleService.findAll()); // Добавим роли
+        mavAdmin.addObject("getUsers", userService.findAll()); //получаем всех пользователей
+        mavAdmin.addObject("admin", userService.findByUsername(principal.getName()));
+        mavAdmin.addObject("newUser", new User());
+        mavAdmin.addObject("allRoles", roleService.findAll()); // Добавим роли
 
-        return "admin";
+        return mavAdmin;
     }
 
 
-    @GetMapping("/404")
-    public String showError(ModelMap model) {
-        model.addAttribute("errorMessage", "Something went wrong");
-        return "404";
+    @GetMapping("/error")
+    public ModelAndView showError(@RequestParam(name = "errorMessage", required = false) String errorMessage) {
+
+        ModelAndView mavError = new ModelAndView("error");
+
+        if (errorMessage != null) {
+            mavError.addObject("errorMessage", errorMessage);  // добавляем параметр в модель
+        } else {
+            mavError.addObject("errorMessage", "Something went wrong");
+        }
+
+        return mavError;
     }
 
 
     @PostMapping("/newuser")
-    @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
-    public String newUser(@ModelAttribute("newUser") User user, ModelMap model) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ModelAndView newUser(@ModelAttribute("newUser") User user) {
 
         try {
             userService.save(user);
-        } catch (IllegalArgumentException e) { // обработка не выбранных ролей или если роли отсутствуют
-            model.addAttribute("errorMessage", "Ошибка: " + e.getMessage());
-            return "404";
+        } catch (IllegalArgumentException e) {
+            ModelAndView mavError = new ModelAndView("error"); // имя шаблона ошибки
+            mavError.addObject("errorMessage", "Ошибка с ролями: " + e.getMessage());
+            return mavError;
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Ошибка при сохранении пользователя: " + e.getMessage());
-            return "404";
+            ModelAndView mavError = new ModelAndView("error"); // имя шаблона ошибки
+            mavError.addObject("errorMessage", "Ошибка: " + e.getMessage());
+            return mavError;
         }
 
-        return "redirect:/admin";
+        return new ModelAndView("redirect:/admin");
     }
 
 
-    @PostMapping("/deleteuser/{id}")
+//    @PostMapping("/deleteuser/{id}")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
+//    public String removeUser(@PathVariable("id") long id, ModelMap model) {
+//
+//        try {
+//            userService.delete(id);
+//        } catch (EntityNotFoundException e) {
+//            model.addAttribute("errorMessage", "Проблема с удалением пользователя: " + e.getMessage());
+//            return "error";
+//        }
+//
+//        return "redirect:/admin";
+//    }
+
+
+    @PostMapping("/deleteuser/")
     @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
-    public String removeUser(@PathVariable("id") long id, ModelMap model) {
+    public ModelAndView removeUser(@RequestParam("id") long id) {
+
+        ModelAndView mavDelete = new ModelAndView("redirect:/admin");
 
         try {
             userService.delete(id);
         } catch (EntityNotFoundException e) {
-            model.addAttribute("errorMessage", "Проблема с удалением пользователя: " + e.getMessage());
-            return "404";
+            ModelAndView mavError = new ModelAndView("error");
+            mavError.addObject("errorMessage", "Проблема с удалением пользователя: " + e.getMessage());
+            return mavError;
         }
 
-        return "redirect:/admin";
+        return mavDelete;
     }
 
 
@@ -91,10 +122,10 @@ public class AdminsController {
             userService.update(id, user);
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", "Ошибка при изменении: " + e.getMessage());
-            return "404";
+            return "error";
         } catch (RuntimeException e) {
             model.addAttribute("errorMessage", "Ошибка при изменении: " + e.getMessage());
-            return "404";
+            return "error";
         }
 
         return "redirect:/admin";

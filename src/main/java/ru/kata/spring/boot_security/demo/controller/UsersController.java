@@ -26,7 +26,7 @@ public class UsersController {
 
         if (user == null || principal.getName() == null) {
             model.addAttribute("errorMessage", "Данные пользователя отсутствуют в БД.");
-            return "404";
+            return "error";
         }
 
         model.addAttribute("user", user);
@@ -39,7 +39,7 @@ public class UsersController {
 
         model.addAttribute("errorMessage", "Something went wrong");
 
-        return "404";
+        return "error";
     }
 
 }
