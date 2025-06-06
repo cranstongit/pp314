@@ -2,10 +2,8 @@ package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -80,26 +78,9 @@ public class AdminsController {
     }
 
 
-//    @PostMapping("/deleteuser/{id}")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
-//    public String removeUser(@PathVariable("id") long id, ModelMap model) {
-//
-//        try {
-//            userService.delete(id);
-//        } catch (EntityNotFoundException e) {
-//            model.addAttribute("errorMessage", "Проблема с удалением пользователя: " + e.getMessage());
-//            return "error";
-//        }
-//
-//        return "redirect:/admin";
-//    }
-
-
-    @PostMapping("/deleteuser/")
+    @PostMapping("/deleteuser")
     @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
     public ModelAndView removeUser(@RequestParam("id") long id) {
-
-        ModelAndView mavDelete = new ModelAndView("redirect:/admin");
 
         try {
             userService.delete(id);
@@ -109,26 +90,27 @@ public class AdminsController {
             return mavError;
         }
 
-        return mavDelete;
+        return new ModelAndView("redirect:/admin");
     }
 
 
-    @PostMapping("/edituser/{id}")
+    @PostMapping("/edituser")
     @PreAuthorize("hasRole('ROLE_ADMIN')") //второй слой защиты
-    public String updateUser(@PathVariable("id") long id,
-                             @ModelAttribute("user") User user, ModelMap model) {
+    public ModelAndView updateUser(@RequestParam("id") long id, @ModelAttribute("user") User user) {
 
         try {
             userService.update(id, user);
         } catch (EntityNotFoundException e) {
-            model.addAttribute("errorMessage", "Ошибка при изменении: " + e.getMessage());
-            return "error";
+            ModelAndView mavError = new ModelAndView("error");
+            mavError.addObject("errorMessage", "Ошибка при изменении: " + e.getMessage());
+            return mavError;
         } catch (RuntimeException e) {
-            model.addAttribute("errorMessage", "Ошибка при изменении: " + e.getMessage());
-            return "error";
+            ModelAndView mavError = new ModelAndView("error");
+            mavError.addObject("errorMessage", "Ошибка при изменении: " + e.getMessage());
+            return mavError;
         }
 
-        return "redirect:/admin";
+        return new ModelAndView("redirect:/admin");
     }
 
 }

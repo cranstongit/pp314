@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService {
       this.passwordEncoder = passwordEncoder;
    }
 
+
    @Transactional
    @Override
    public void save(User user) {
@@ -52,19 +53,6 @@ public class UserServiceImpl implements UserService {
       userDao.save(user);
    }
 
-   @Override
-   public User find(long id) { return userDao.find(id); }
-
-   @Override
-   public User findOrThrow(long id) {
-
-      User user = userDao.find(id);
-
-      if (user == null) {
-         throw new EntityNotFoundException("User with id " + id + " not found");
-      }
-      return user;
-   }
 
    @Transactional
    @Override
@@ -94,6 +82,7 @@ public class UserServiceImpl implements UserService {
       }
    }
 
+
    @Transactional
    @Override
    public void delete(long id) {
@@ -107,15 +96,18 @@ public class UserServiceImpl implements UserService {
       userDao.delete(id);
    }
 
+
    @Override
    public List<User> findAll() {
       return userDao.findAll();
    }
 
+
    @Override
    public User findByUsername(String username) {
       return userDao.findByUsername(username);
    }
+
 
    @Override
    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
